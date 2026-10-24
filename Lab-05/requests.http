@@ -1,0 +1,47 @@
+### ===================================================================
+### Практична робота № 5: Модульна архітектура та ін’єкція залежностей у NestJS
+### Варіант 4: Доставка їжі та ресторанів (/dishes та /orders)
+### Файл запитів для тестування (VS Code REST Client / Postman)
+### ===================================================================
+
+@baseUrl = http://localhost:3000
+
+### 1. Отримання каталогу страв (перевірка ініціалізації OnModuleInit та генерації slug)
+GET {{baseUrl}}/dishes HTTP/1.1
+Accept: application/json
+
+### 2. Створення нової страви (перевірка роботи SlugService у DishesService)
+POST {{baseUrl}}/dishes HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Сирна піца Кватро Формаджо",
+  "price": 380,
+  "weightGrams": 500,
+  "calories": 1120,
+  "isSpicy": false
+}
+
+### 3. Оформлення замовлення з валідним productId (перевірка міжмодульного DI та FEE_CALCULATOR)
+POST {{baseUrl}}/orders HTTP/1.1
+Content-Type: application/json
+
+{
+  "productId": "dish-1",
+  "quantity": 2,
+  "customerEmail": "student@college.edu"
+}
+
+### 4. Оформлення замовлення з неіснуючим productId (перевірка 404 Not Found)
+POST {{baseUrl}}/orders HTTP/1.1
+Content-Type: application/json
+
+{
+  "productId": "dish-999",
+  "quantity": 1,
+  "customerEmail": "student@college.edu"
+}
+
+### 5. Отримання списку всіх створених замовлень (OrdersModule)
+GET {{baseUrl}}/orders HTTP/1.1
+Accept: application/json
