@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # Практична робота № 4: Розроблення REST-ендпоінтів засобами NestJS
 # Скрипт автоматизованого тестування REST API (Варіант 4: /dishes)
 # ==============================================================================
@@ -12,12 +12,11 @@ Write-Host "====================================================================
 Write-Host " ПЕРЕВІРКА ДОСТУПНОСТІ СЕРВЕРА NESTJS (http://localhost:3000)          " -ForegroundColor Cyan
 Write-Host "======================================================================" -ForegroundColor Cyan
 
-# Перевірка чи запущено сервер
 try {
     $check = Invoke-WebRequest -Uri $baseUrl -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
 } catch {
     Write-Warning "Сервер NestJS ще не запущено на порті 3000."
-    Write-Host "Будь ласка, запустіть у сусідньому терміналі команду:" -ForegroundColor Yellow
+    Write-Host "Будь ласка, запустіть у першому терміналі команду:" -ForegroundColor Yellow
     Write-Host "cd C:\Users\denchik\Desktop\labs\WEB-Application\Lab-04" -ForegroundColor White
     Write-Host "npm start" -ForegroundColor White
     exit 1
@@ -31,16 +30,9 @@ Write-Host "=== ТЕСТУВАННЯ ЕНДПОІНТІВ ЧЕРЕЗ HTTP КЛІ
 Write-Host "> POST /dishes HTTP/1.1" -ForegroundColor Gray
 Write-Host "> Host: localhost:3000" -ForegroundColor Gray
 Write-Host "> Content-Type: application/json" -ForegroundColor Gray
-$postBody = @{
-    title = "Піца Пепероні Діавола"
-    price = 340
-    weightGrams = 520
-    calories = 1180
-    isSpicy = $true
-} | ConvertTo-Json
-
+$postBody = '{"title":"Піца Пепероні Діавола","price":340,"weightGrams":520,"calories":1180,"isSpicy":true}'
 Write-Host $postBody
-$postResp = Invoke-WebRequest -Uri $baseUrl -Method POST -Body $postBody -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$postResp = Invoke-WebRequest -Uri $baseUrl -Method POST -Body ([System.Text.Encoding]::UTF8.GetBytes($postBody)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
 Write-Host "< HTTP/1.1 201 Created" -ForegroundColor Green
 Write-Host "< Content-Type: application/json; charset=utf-8" -ForegroundColor Gray
 Write-Host $postResp.Content
@@ -61,7 +53,7 @@ try {
 }
 Write-Host ""
 
-# 3. GET /dishes (Отримання списку та перевірка кастомних заголовків)
+# 3. GET /dishes
 Write-Host "> GET /dishes HTTP/1.1" -ForegroundColor Gray
 $listResp = Invoke-WebRequest -Uri $baseUrl -Method GET -UseBasicParsing
 Write-Host "< HTTP/1.1 200 OK" -ForegroundColor Green
@@ -72,11 +64,8 @@ Write-Host ""
 
 # 4. PATCH /dishes/:id
 Write-Host "> PATCH /dishes/$createdId HTTP/1.1" -ForegroundColor Gray
-$patchBody = @{
-    price = 365
-    title = "Піца Пепероні Діавола (Оновлено)"
-} | ConvertTo-Json
-$patchResp = Invoke-WebRequest -Uri "$baseUrl/$createdId" -Method PATCH -Body $patchBody -ContentType "application/json; charset=utf-8" -UseBasicParsing
+$patchBody = '{"price":365,"title":"Піца Пепероні Діавола (Оновлено)"}'
+$patchResp = Invoke-WebRequest -Uri "$baseUrl/$createdId" -Method PATCH -Body ([System.Text.Encoding]::UTF8.GetBytes($patchBody)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
 Write-Host "< HTTP/1.1 200 OK" -ForegroundColor Green
 Write-Host $patchResp.Content
 Write-Host ""
