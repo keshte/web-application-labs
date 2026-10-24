@@ -1,0 +1,25 @@
+{
+  "name": "lab-03-generics-decorators",
+  "version": "1.0.0",
+  "description": "Практична робота № 3: Узагальнення, декоратори та утиліти типів TypeScript (Варіант 4)",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "node ./node_modules/typescript/lib/tsc.js",
+    "start:prod": "node dist/index.js"
+  },
+  "keywords": [
+    "typescript",
+    "generics",
+    "decorators",
+    "repository-pattern"
+  ],
+  "author": "Student",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.19.34",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
