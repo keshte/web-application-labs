@@ -1,0 +1,94 @@
+### ===================================================================
+### Практична робота № 1: Дослідження мережевих протоколів
+### Файл HTTP-запитів для розширення REST Client / Thunder Client у VS Code
+### ===================================================================
+
+@baseUrl = https://dummyjson.com
+@httpbinUrl = https://httpbin.org
+
+### -------------------------------------------------------------------
+### РІВЕНЬ 1. Дослідження методів REST API в Postman / REST Client
+### -------------------------------------------------------------------
+
+### 1.1. GET-запит: Отримання інформації про товар за ID (очікується 200 OK)
+GET {{baseUrl}}/products/1 HTTP/1.1
+Accept: application/json
+
+### 1.2. POST-запит: Додавання нового товару (очікується 201 Created)
+POST {{baseUrl}}/products/add HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "HyperX Alloy Origins Keyboard",
+  "price": 129.99,
+  "category": "electronics",
+  "stock": 45
+}
+
+### 1.3. PUT-запит: Повне/часткове оновлення інформації про товар (очікується 200 OK)
+PUT {{baseUrl}}/products/1 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Essence Mascara Lash Princess (Updated Edition)"
+}
+
+### 1.4. DELETE-запит: Видалення товару за ID (очікується 200 OK з позначкою isDeleted: true)
+DELETE {{baseUrl}}/products/1 HTTP/1.1
+
+### 1.5. GET-запит списку товарів (для аналізу через DevTools Network)
+GET {{baseUrl}}/products HTTP/1.1
+Accept: application/json
+
+
+### -------------------------------------------------------------------
+### РІВЕНЬ 2. Додаткові REST виклики та автентифікація
+### -------------------------------------------------------------------
+
+### 2.1. Отримання фільтрованого списку користувачів (limit=2, select=firstName,email)
+GET {{baseUrl}}/users?limit=2&select=firstName,email HTTP/1.1
+Accept: application/json
+
+### 2.2. Створення нового посту (POST /posts/add)
+POST {{baseUrl}}/posts/add HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Дослідження мережевих протоколів HTTP/HTTPS",
+  "userId": 5
+}
+
+### 2.3. Перевірка кодів помилок (404 Not Found)
+GET {{httpbinUrl}}/status/404 HTTP/1.1
+
+### 2.4. Перевірка кодів помилок (500 Internal Server Error)
+GET {{httpbinUrl}}/status/500 HTTP/1.1
+
+### 2.5. Автентифікація користувача: отримання JWT-токена
+# @name login
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "emilys",
+  "password": "emilyspass"
+}
+
+### 2.6. Доступ до захищеного ендпоінта з використанням Bearer токена
+@authToken = {{login.response.body.accessToken}}
+GET {{baseUrl}}/auth/me HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+
+### -------------------------------------------------------------------
+### РІВЕНЬ 3. Безпека Cookies та CORS Preflight
+### -------------------------------------------------------------------
+
+### 3.1. Встановлення сесійних cookies з атрибутами безпеки
+GET {{httpbinUrl}}/response-headers?Set-Cookie=session_id=xyz789;%20Path=/;%20Secure;%20HttpOnly;%20SameSite=Strict HTTP/1.1
+
+### 3.2. Симуляція попереднього CORS Preflight-запиту браузера (OPTIONS)
+OPTIONS {{httpbinUrl}}/post HTTP/1.1
+Origin: https://my-college-app.edu
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type, Authorization
