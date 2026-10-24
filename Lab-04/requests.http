@@ -1,0 +1,51 @@
+### ===================================================================
+### Практична робота № 4: Розроблення REST-ендпоінтів засобами NestJS
+### Варіант 4: Доставка їжі та ресторанів (/dishes)
+### Файл запитів для тестування (VS Code REST Client / Postman)
+### ===================================================================
+
+@baseUrl = http://localhost:3000/dishes
+
+### 1. Отримання списку всіх страв (перевірка 200 OK та кастомних заголовків)
+GET {{baseUrl}} HTTP/1.1
+Accept: application/json
+
+### 2. Пошук та пагінація через Query-параметри (search + limit)
+GET {{baseUrl}}?search=Рамен&limit=5 HTTP/1.1
+Accept: application/json
+
+### 3. Отримання однієї страви за існуючим ID (200 OK)
+GET {{baseUrl}}/1 HTTP/1.1
+Accept: application/json
+
+### 4. Отримання страви за неіснуючим ID (перевірка обробки 404 Not Found)
+GET {{baseUrl}}/99999 HTTP/1.1
+Accept: application/json
+
+### 5. Створення нової страви (перевірка 201 Created)
+# @name createDish
+POST {{baseUrl}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Піца Пепероні Діавола",
+  "price": 340,
+  "weightGrams": 520,
+  "calories": 1180,
+  "isSpicy": true
+}
+
+### 6. Часткове оновлення страви через PATCH (200 OK)
+PATCH {{baseUrl}}/1 HTTP/1.1
+Content-Type: application/json
+
+{
+  "price": 285,
+  "title": "Піца Маргарита Класична (Оновлена рецептура)"
+}
+
+### 7. Видалення страви за ID (перевірка статусу 204 No Content)
+DELETE {{baseUrl}}/3 HTTP/1.1
+
+### 8. Спроба повторного видалення вже неіснуючої страви (404 Not Found)
+DELETE {{baseUrl}}/3 HTTP/1.1
