@@ -1,0 +1,20 @@
+{
+  "name": "lab-02-typescript",
+  "version": "1.0.0",
+  "description": "Практична робота № 2: Базові засоби системи типів TypeScript (Варіант 4)",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "node ./node_modules/typescript/lib/tsc.js",
+    "start:prod": "node dist/index.js"
+  },
+  "keywords": ["typescript", "e-commerce", "types"],
+  "author": "Student",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.19.34",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
