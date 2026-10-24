@@ -31,54 +31,29 @@ Write-Host "=== ПЕРЕВІРКА ВІДХИЛЕННЯ ЗАПИТУ З ЗАБО
 Write-Host "> POST /dishes HTTP/1.1" -ForegroundColor Gray
 Write-Host "> Host: localhost:3000" -ForegroundColor Gray
 Write-Host "> Content-Type: application/json" -ForegroundColor Gray
+Write-Host '{"title":" Ноутбук Pro 16 ","price":-500,"unknownPayload":"hack"}'
 
-$forbiddenBody = '{"title":" Ноутбук Pro 16 ","price":-500,"unknownPayload":"hack"}'
-Write-Host $forbiddenBody
-
-try {
-    $errResp = Invoke-WebRequest -Uri $baseUrl -Method POST -Body ([System.Text.Encoding]::UTF8.GetBytes($forbiddenBody)) -ContentType "application/json; charset=utf-8" -UseBasicParsing -ErrorAction Stop
-} catch {
-    $resp = $_.Exception.Response
-    Write-Host "< HTTP/1.1 400 Bad Request" -ForegroundColor Red
-    Write-Host "< Content-Type: application/json; charset=utf-8" -ForegroundColor Gray
-    if ($resp.Headers["X-Response-Time"]) {
-        Write-Host "< X-Response-Time: $($resp.Headers['X-Response-Time'])" -ForegroundColor Magenta
-    }
-    $reader = New-Object System.IO.StreamReader($resp.GetResponseStream())
-    Write-Host $reader.ReadToEnd()
-}
-Write-Host ""
+curl.exe --% -s -i -X POST http://localhost:3000/dishes -H "Content-Type: application/json" -d "{\"title\":\" Ноутбук Pro 16 \",\"price\":-500,\"unknownPayload\":\"hack\"}"
+Write-Host "`n"
 
 # ------------------------------------------------------------------------------
 # 2. ТЕСТ ВАЛІДНОГО СТВОРЕННЯ З ПРОБІЛАМИ (TrimPipe + TimingInterceptor)
 # ------------------------------------------------------------------------------
 Write-Host "=== ТЕСТ ВАЛІДНОГО СТВОРЕННЯ (САНІТИЗАЦІЯ TRIMPIPE) ===" -ForegroundColor Cyan
 Write-Host "> POST /dishes HTTP/1.1" -ForegroundColor Gray
-$validBody = '{"title":"   Піца Пепероні Діавола   ","price":340,"weightGrams":520,"calories":1180,"isSpicy":true}'
-Write-Host $validBody
+Write-Host '{"title":"   Піца Пепероні Діавола   ","price":340,"weightGrams":520,"calories":1180,"isSpicy":true}'
 
-$validResp = Invoke-WebRequest -Uri $baseUrl -Method POST -Body ([System.Text.Encoding]::UTF8.GetBytes($validBody)) -ContentType "application/json; charset=utf-8" -UseBasicParsing
-Write-Host "< HTTP/1.1 201 Created" -ForegroundColor Green
-Write-Host "< Content-Type: application/json; charset=utf-8" -ForegroundColor Gray
-if ($validResp.Headers["X-Response-Time"]) {
-    Write-Host "< X-Response-Time: $($validResp.Headers['X-Response-Time'])" -ForegroundColor Magenta
-}
-Write-Host $validResp.Content
-Write-Host ""
+curl.exe --% -s -i -X POST http://localhost:3000/dishes -H "Content-Type: application/json" -d "{\"title\":\"   Піца Пепероні Діавола   \",\"price\":340,\"weightGrams\":520,\"calories\":1180,\"isSpicy\":true}"
+Write-Host "`n"
 
 # ------------------------------------------------------------------------------
 # 3. ТЕСТ QUERY-ТРАНСФОРМАЦІЇ (?limit=5 -> число 5)
 # ------------------------------------------------------------------------------
 Write-Host "=== ТЕСТ QUERY-ТРАНСФОРМАЦІЇ (GET /dishes?limit=5) ===" -ForegroundColor Cyan
 Write-Host "> GET /dishes?limit=5 HTTP/1.1" -ForegroundColor Gray
-$getResp = Invoke-WebRequest -Uri "$baseUrl?limit=5" -Method GET -UseBasicParsing
-Write-Host "< HTTP/1.1 200 OK" -ForegroundColor Green
-if ($getResp.Headers["X-Response-Time"]) {
-    Write-Host "< X-Response-Time: $($getResp.Headers['X-Response-Time'])" -ForegroundColor Magenta
-}
-Write-Host "Отримано страв у вибірці: $(($getResp.Content | ConvertFrom-Json).Count)" -ForegroundColor Gray
-Write-Host $getResp.Content
-Write-Host ""
+
+curl.exe -s -i "http://localhost:3000/dishes?limit=5"
+Write-Host "`n"
 
 Write-Host "======================================================================" -ForegroundColor Cyan
 Write-Host " Всі перевірки конвеєра Request Pipeline успішно завершено!           " -ForegroundColor Cyan
