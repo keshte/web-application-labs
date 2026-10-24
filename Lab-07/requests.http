@@ -1,0 +1,78 @@
+### Змінні оточення
+@baseUrl = http://localhost:3000
+@dishId = {{createDish1.response.body.id}}
+
+### 1. Створення першої страви (Піца Пепероні Діавола)
+# @name createDish1
+POST {{baseUrl}}/dishes
+Content-Type: application/json
+
+{
+  "title": "Піца Пепероні Діавола",
+  "price": 340.00,
+  "weightGrams": 520,
+  "calories": 1180,
+  "isSpicy": true
+}
+
+### 2. Створення другої страви (Бургер Техас BBQ)
+# @name createDish2
+POST {{baseUrl}}/dishes
+Content-Type: application/json
+
+{
+  "title": "Бургер Техас BBQ",
+  "price": 285.00,
+  "weightGrams": 420,
+  "calories": 980,
+  "isSpicy": false
+}
+
+### 3. Створення третьої страви (Салат Цезар з куркою)
+# @name createDish3
+POST {{baseUrl}}/dishes
+Content-Type: application/json
+
+{
+  "title": "Салат Цезар з куркою",
+  "price": 220.00,
+  "weightGrams": 310,
+  "calories": 490,
+  "isSpicy": false
+}
+
+### 4. Отримання списку всіх страв (за замовчуванням page=1, limit=10)
+GET {{baseUrl}}/dishes
+
+### 5. Offset-пагінація: Сторінка 1 (limit=2)
+GET {{baseUrl}}/dishes?page=1&limit=2
+
+### 6. Offset-пагінація: Сторінка 2 (limit=2)
+GET {{baseUrl}}/dishes?page=2&limit=2
+
+### 7. Пошук страви за назвою (ILike filter)
+GET {{baseUrl}}/dishes?search=Піца
+
+### 8. Отримання страви за UUID
+GET {{baseUrl}}/dishes/{{dishId}}
+
+### 9. Часткове оновлення страви (PATCH)
+PATCH {{baseUrl}}/dishes/{{dishId}}
+Content-Type: application/json
+
+{
+  "price": 365.00,
+  "isSpicy": false
+}
+
+### 10. М'яке видалення страви (Soft Delete - DELETE 204 No Content)
+DELETE {{baseUrl}}/dishes/{{dishId}}
+
+### 11. Перевірка списку страв (видалений запис автоматично фільтрується)
+GET {{baseUrl}}/dishes
+
+### 12. Відновлення видаленої страви (Restore)
+PATCH {{baseUrl}}/dishes/{{dishId}}/restore
+
+### 13. Перевірка після відновлення (deletedAt знову null)
+GET {{baseUrl}}/dishes/{{dishId}}
